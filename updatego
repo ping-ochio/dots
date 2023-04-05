@@ -1,0 +1,26 @@
+#!/bin/bash
+new=$(ls ~/Descargas/go1*)
+old="/usr/local/go"
+
+
+if [[ "$new" != ""  ]] && [[ -d "$old" ]] 
+then 
+valNew=$(basename $new | cut -d "." -f 1-3)
+valActual=$(cat /usr/local/go/VERSION)
+	
+	printf "Renaming \"go\" directory to \"%s\"\n" "$valActual"
+
+	sudo mv $old /usr/local/$valActual		
+
+	cd ~/Descargas/ 
+	
+	if [[ $(sudo tar -xvf $new && sudo mv go /usr/local/ &&	sudo rm $new) ]]
+	then
+
+		printf "Go was uptdated to version \"%s\"\n" "$valNew"
+	
+	fi	
+
+else
+				echo "Something went wrong"
+fi 

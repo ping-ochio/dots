@@ -1,0 +1,95 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+Green='\033[0;32m'
+Purple='\033[0;35m'
+Cyan='\033[0;36m'
+NC='\033[0m' # No Color
+bold=$(tput bold)
+normal=$(tput sgr0)
+blink=$(tput blink)
+noBlink='\e[0m'
+
+lista_color () {
+	cont=0;
+	while read line; do
+		((cont++))
+		printf "${Green}%d - $line${NC}\n\r" $cont
+	done < list
+
+}
+
+clear;
+printf ${bold}"Tenga en cuenta que Ud. esta en "${RED}\"${PWD}\"${NC}
+printf ${bold}"\nIngrese su criterio de búsqueda: "${normal}
+read criterio
+find . -maxdepth 1 -type f -name "*$criterio*"  > list
+	if [ -s list ]; then
+			printf ${Green}"\n-------------------------------------------------------\n"${NC};
+			printf ${Green}${bold}"\nSe hallaron los siguientes archivos según su búsqueda:\n${NC}";
+			lista_color;
+			printf ${Green}"\n-------------------------------------------------------"${NC};
+			
+			while
+				printf "\n[ ${Purple}c${NC} ] ${bold}- Cambiar extensión${normal}"
+				printf "\n[ ${Purple}a${NC} ] ${bold}- Agregar extensión${normal}"
+				printf "\n[ ${Purple}e${NC} ] ${bold}- Eliminar extensión${normal}"
+				printf "\n[ ${Purple}s${NC} ] ${bold}- Salir\n${normal}"
+				read elec
+				case $elec in
+					A | a)
+					printf "\n${bold}Ingrese la extensión que desea agregar: ${normal}";
+						read exten;
+						while read line; do
+							mv $line $line.$exten;
+							printf "\nSe renombró ${Purple}\"$line\"${NC} --> ${Cyan}$line.$exten${NC}"
+						done < list
+					;;
+					C | c)
+					printf "\n${bold}Ingrese la nueva extensión: ${normal}";
+						read exten;
+						printf "\nEstá seguro de cambiar la extensión? (s/n)"
+						read seguro;
+						if 	[[ "$seguro" == [sS] ]]; then
+								cont=0
+							printf ${Green}"\n------------------( Se renombró )----------------------\n\n"${NC};
+							while read line; do
+								otro=$line
+								((cont++))
+								culito=$( echo $line | sed 's/\.\w.*/.'${exten}'/' )
+								mv $otro $culito;
+								printf "%d -${Purple}$line${NC} --> ${Cyan}$culito${NC}\n"	$cont
+							done < list
+							printf ${Green}"\n-------------------------------------------------------"${NC};
+						else 
+							printf "\nNo se realizó operación"
+						fi
+					;;
+
+					E | e)
+						while read line; do
+							line1="$(echo $line | sed 's/\.\w\+$//g')"
+							mv $line $line1 2> /dev/null;
+							printf "\nSe renombró ${Purple}\"$line\"${NC} \t--> ${Cyan}$line1${NC}"	
+						done < list
+						echo -e "\n"
+					;;
+			
+					S | s)
+						printf "${Cyan}\"${bold}Saliendo del script\n${normal}\"${NC}"
+						exit 0
+					;;
+					*) 
+						printf "${RED}${bold}Opción \"$elec\" no válida\n${NC}"
+					;;
+				esac
+				[[ "$elec" != [aAcCsS] ]]
+			do true; done
+		
+	else
+		printf "\nNo se hallaron archivos que contengan:  ${RED}\"$criterio\"${NC}\n";
+		exit 0
+	fi
+
+
+

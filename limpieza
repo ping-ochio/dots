@@ -1,0 +1,34 @@
+#!/bin/bash
+#Simple script to find files or directories depending on choice selected
+# "d" for directories or "f" for files
+
+while  read name; do
+
+	printf "%s========================================================\n"
+
+	find / -type f -name "$name*" 2>/dev/null | tee -a to-delete.txt
+
+done < list.txt
+
+
+echo -e "\033[01;31m"" ¡¡ WARNING !! -  Are you sure you want to delete these files? (Y/N)\033[0m"
+
+read sure
+
+if [[ $sure == "Y" || $sure == "y" ]]; then
+	
+	while read trash; do
+
+			printf "\033[01;31m""Deleting --> ""\033[0m""%s""\n" "$trash"
+	
+		sudo rm $trash 2>/dev/null;
+	
+	done < to-delete.txt 
+	rm to-delete.txt;
+		echo -e "\033[01;32m""Cleaning done""\033[0m"
+
+elif [[ $sure == "N" || $sure == "n"  ]]; then
+	
+		echo -e "\033[01;31m""Aborting action""\033[0m"
+
+fi

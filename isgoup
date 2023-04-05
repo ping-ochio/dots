@@ -1,0 +1,55 @@
+#!/bin/bash
+
+#Check if there is a newer golang version than installed and if so download
+
+actual="$(cat /usr/local/go/VERSION)"
+
+ver=$(\
+			curl -s https://go.dev/dl/ \
+			| grep -E -m 1 -i '"toggleVisible"' \
+			| cut -d"=" -f 3 \
+			| sed -e 's/"//;s/">// '\
+		)
+		file="go.dev/dl/$ver.linux-amd64.tar.gz"
+		
+sha=$(curl -s https://go.dev/dl/ \
+			| grep -E -i -A 6 "$ver".linux-amd64.tar.gz\"\> \
+		 	| grep '<tt>' \
+		 	| sed -e 's/<td><tt>//' -e 's/<\/tt><\/td>//' \
+			| xargs \
+		)
+
+
+
+
+if [[ "$ver" == "$actual" ]]
+then
+	printf "Go is up to date\n"
+else 
+				echo "There is a new version of Go, do you want to download it?"
+				read -r option
+				
+				if [[ "$option" == "Y" || "$option" == "y" ]]
+				then
+
+					echo "Downloading the new version"
+
+					cd ~/Descargas/ && wget -q --show-progress https://"$file"
+
+					sha1="$(sha256sum "$ver".linux-amd64.tar.gz | cut -d " " -f 1)"
+
+					
+					echo "Pag: $sha"	
+					echo "Dow: $sha1"
+					
+					
+					if [[ "$sha" != "$sha1" ]]
+					then
+						
+									echo " error bad sha256sum "
+
+									rm  "$ver".linux-amd64.tar.gz 
+					fi
+				
+				fi
+fi

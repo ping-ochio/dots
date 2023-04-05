@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+echo "ingresar:" 
+#shift
+#for q in "${@:-hola}"; do q; done
+
+echo "entrada: $2 y $3"
+time="$1"
+shift
+echo "time is : $time"
+for i in "${@:1}"; do
+		echo "-------------------------------"		
+		echo "-------- Scaning: $i ---------"	
+		echo "-------------------------------"		
+		find ~/Documentos -atime "$time"  -type f -name "*.$i" 2>/dev/null;
+done

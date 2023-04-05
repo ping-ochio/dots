@@ -1,0 +1,64 @@
+#!/bin/bash
+
+
+# Script that tests if a domain or range of ip addresses respond to the ping command;
+# if get response, then save the result in an file named info.txt
+# and display its content.
+
+
+# FALTA HACER QUE PIDA RANGO DE IP O NOMBRE DE DOMINIO
+
+
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+ENDCOLOR="\e[0m"
+alive=0
+noresponse=0
+now=$(date +"%c")
+
+#------------------------------------------------------------------------------
+
+echo -e "\n------- ${YELLOW}DOMAIN TESTING WITH PING COMMAND${ENDCOLOR} ------"
+
+printf "\n%s\n\n" "$now" 2>&1
+
+#------------------------------------------------------------------------------
+for i in {1..99}
+do
+	ip=192.168.1.$i
+	echo "| Testing: $ip        |"
+
+	if ping -W 1 -c 1 $ip 2>&1 >/dev/null
+	then
+		
+			let "alive+=1";
+			
+			if [ $alive == 1 ]; then
+				printf "\n%s\n\n" "$now" >> info.txt
+			fi
+
+			echo -e "| ${GREEN}$ip <-- it's alive${ENDCOLOR}  |" 2>&1 | tee -a info.txt
+	else
+		   	let "noresponse+=1"; 
+			echo -e "| ${RED}$ip <-- no response${ENDCOLOR} |"
+	fi
+	echo -e "+-----------------------------+"
+done
+
+#------------------------------------------------------------------------------
+
+echo -e "+------------------------------+"
+echo -e "| Alive: $alive -- NoResponse: $noresponse   |"
+echo -e "+------------------------------+"
+
+#------------------------------------------------------------------------------
+if command -v batcat &> /dev/null
+then
+		batcat info.txt; 
+else
+		cat info.txt
+fi
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "Ingrese de hace cuantos días quiere ver."
+echo "Para ver los de hoy ponga 0"
+
+read -r dias
+
+find ~ -type f -atime $dias \( -name '*.txt' -o -name "*.pdf" -o -name "*.png" -o -name "*.html" -o -name "*.go" \)

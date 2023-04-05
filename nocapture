@@ -1,0 +1,20 @@
+#!/bin/bash
+
+
+if [[ $(find ~/Imágenes/ -type f -ctime -1 | wc -l) -gt 0 ]]; then
+				
+	echo "There are some files to delete"
+	echo "You'll delete these files, are you sure (y/n)?"
+
+	find ~/Imágenes/ -type f -ctime -1 
+	read -r select
+
+	if [[ $select == "y" ]]; then
+		echo "Deleting"
+		find ~/Imágenes/ -type f -ctime -1 -delete
+  else
+		echo "Exiting"
+	fi
+else 
+				echo "No files to delete "
+fi	

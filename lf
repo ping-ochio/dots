@@ -1,0 +1,13 @@
+
+#!/bin/bash
+
+# SHOW ONLY THE FILES NAME WITHOUT PATH
+# CAN ESPECIFY THE START DIRECTORY AND  FRAGMENT OF FILE NAME OR EXTENTION
+# ex "lf . txt"
+
+
+
+find "${1:-.}" -type f -name "*$2*" 2>/dev/null | awk -F "/" '{print $(NF)}' 
+
+
+

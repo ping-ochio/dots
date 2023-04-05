@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#set a tmux and vim enviroment
+
+cd <path-to-mariadbProject>
+
+tmux has-session -t database
+if [ $? != 0 ]
+then
+  tmux new-session -d -s database
+fi
+
+tmux send-keys 'clear' C-m
+tmux send-keys 'vim main.go' C-m
+tmux split-window -h
+
+tmux select-pane -t 0
+tmux attach -t database

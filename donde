@@ -1,0 +1,66 @@
+#!/bin/bash
+#Simple script to find files or directories depending on selected choice
+# "d" for directories or "f" for files 
+	
+echo "Find directories(d) or files(f)"
+
+read -r  choice
+
+n=0
+
+#================ Find files ==============================
+
+if [[ $choice == "f" ]]; then 		
+	echo "Directory( default / ): "
+	read -r dir
+	echo "Filename: "
+	read -r name
+	echo "Extension: "
+	read -r ext
+#================ Find files ========================
+	printf "%s========================================================\n"
+	find /$dir* -type f -iname "*$name*$ext*" 2>/dev/null | awk -v n="$n" '
+	{ 
+		
+		n++; 
+		printf( n" - ");
+		N=split($0,a,"/"); 
+		for (i = 2; i < N; i++){
+				printf("/%s", a[i]);
+		} 
+		print "/""\033[01;32m"a[N]"\033[0m" 
+	} 
+	END {
+
+		printf"--------------------------------------------------------\n"
+		printf "    TOTAL FILES FOUND " "\033[01;34m"n"\033[0m" "\n"
+		printf"--------------------------------------------------------\n\n"
+	}'
+
+#================ Find directories ========================
+elif [[ $choice == "d" ]]; then 	
+	echo "Start directory ( default / ): "
+	read dir
+	
+	echo "Subdirectory: "
+	read name
+	
+	printf "%s========================================================\n"
+	find /$dir* -type $choice -iname "$name*$ext*" 2>/dev/null | awk -v n="$n" '
+	{ 
+		n++; 
+		printf( n" - ");
+		N=split($0,a,"/"); 
+		for (i = 2; i < N; i++){
+				printf("/%s", a[i]);
+		} 
+		print "/""\033[01;32m"a[N]"\033[0m" 
+	} 
+
+	END {
+
+		printf"--------------------------------------------------------\n"
+		printf "    TOTAL DIRECTORIES FOUND " "\033[01;34m"n"\033[0m" "\n"
+		printf"--------------------------------------------------------\n\n"
+	}'
+fi
